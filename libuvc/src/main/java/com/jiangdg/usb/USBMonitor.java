@@ -1282,7 +1282,10 @@ public final class USBMonitor {
 		 * @throws IllegalStateException
 		 */
 		public synchronized UsbInterface getInterface(final int interface_id) throws IllegalStateException {
-			return getInterface(interface_id, 0);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				return getInterface(interface_id, 0);
+			}
+			return getInterface(interface_id );
 		}
 
 		/**
