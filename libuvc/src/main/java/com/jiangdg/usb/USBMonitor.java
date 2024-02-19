@@ -177,7 +177,7 @@ public final class USBMonitor {
 					// avoid acquiring intent data failed in receiver on Android12
 					// when using PendingIntent.FLAG_IMMUTABLE
 					// because it means Intent can't be modified anywhere -- jiangdg/20220929
-					int PENDING_FLAG_IMMUTABLE = 1<<25;
+					int PENDING_FLAG_IMMUTABLE = PendingIntent.FLAG_IMMUTABLE;
 					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), PENDING_FLAG_IMMUTABLE);
 				} else {
 					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -186,6 +186,9 @@ public final class USBMonitor {
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
 				filter.addAction(ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					context.registerReceiver(mUsbReceiver, filter, 0);
+				}
 				context.registerReceiver(mUsbReceiver, filter);
 			}
 			// start connection check
