@@ -166,6 +166,7 @@ public final class USBMonitor {
 	 * register BroadcastReceiver to monitor USB events
 	 * @throws IllegalStateException
 	 */
+	@RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 	@SuppressLint({"UnspecifiedImmutableFlag", "WrongConstant"})
 	public synchronized void register() throws IllegalStateException {
 		if (destroyed) throw new IllegalStateException("already destroyed");
@@ -173,12 +174,11 @@ public final class USBMonitor {
 			if (DEBUG) XLogWrapper.i(TAG, "register:");
 			final Context context = mWeakContext.get();
 			if (context != null) {
-				if (Build.VERSION.SDK_INT >= 31) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 					// avoid acquiring intent data failed in receiver on Android12
 					// when using PendingIntent.FLAG_IMMUTABLE
 					// because it means Intent can't be modified anywhere -- jiangdg/20220929
-					int PENDING_FLAG_IMMUTABLE = PendingIntent.FLAG_IMMUTABLE;
-					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), PENDING_FLAG_IMMUTABLE);
+					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION),  PendingIntent.FLAG_IMMUTABLE);
 				} else {
 					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
 				}
@@ -186,10 +186,12 @@ public final class USBMonitor {
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
 				filter.addAction(ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					context.registerReceiver(mUsbReceiver, filter, 0);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+					// 在Android 12及以上版本中注册接收器时使用RECEIVER_NOT_EXPORTED
+					context.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+				}else{
+				    context.registerReceiver(mUsbReceiver, filter);
 				}
-				context.registerReceiver(mUsbReceiver, filter);
 			}
 			// start connection check
 			mDeviceCounts = 0;
