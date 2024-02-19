@@ -166,7 +166,6 @@ public final class USBMonitor {
 	 * register BroadcastReceiver to monitor USB events
 	 * @throws IllegalStateException
 	 */
-	@RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 	@SuppressLint({"UnspecifiedImmutableFlag", "WrongConstant"})
 	public synchronized void register() throws IllegalStateException {
 		if (destroyed) throw new IllegalStateException("already destroyed");
@@ -186,7 +185,7 @@ public final class USBMonitor {
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
 				filter.addAction(ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 					// 在Android 12及以上版本中注册接收器时使用RECEIVER_NOT_EXPORTED
 					context.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 				}else{

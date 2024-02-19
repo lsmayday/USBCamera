@@ -467,8 +467,15 @@ class RenderManager(
                     Logger.e(TAG, "Failed to write file, err = ${e.localizedMessage}", e)
                 }
             }
-              val path = ImageUtils.getImageAbsolutePath(mContext, imageUri)
+            val path = ImageUtils.getImageAbsolutePath(mContext, imageUri)
 //            val path = "$mCameraDir/$displayName"
+            val file = File(path)
+            if (file.length() == 0L) {
+                Logger.e(TAG, "Failed to save file $path")
+                file.delete()
+                mCaptureState.set(false)
+                return
+            }
             mMainHandler.post {
                 mCaptureDataCb?.onComplete(path)
             }
