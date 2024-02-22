@@ -173,7 +173,7 @@ public final class USBMonitor {
 			if (DEBUG) XLogWrapper.i(TAG, "register:");
 			final Context context = mWeakContext.get();
 			if (context != null) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				if (Build.VERSION.SDK_INT >= 31) {
 					// avoid acquiring intent data failed in receiver on Android12
 					// when using PendingIntent.FLAG_IMMUTABLE
 					// because it means Intent can't be modified anywhere -- jiangdg/20220929
@@ -185,9 +185,9 @@ public final class USBMonitor {
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
 				filter.addAction(ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+				if (Build.VERSION.SDK_INT >= 33) {
 					// 在Android 12及以上版本中注册接收器时使用RECEIVER_NOT_EXPORTED
-					context.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+					context.registerReceiver(mUsbReceiver, filter, 2);
 				}else{
 				    context.registerReceiver(mUsbReceiver, filter);
 				}
@@ -1284,9 +1284,10 @@ public final class USBMonitor {
 		 */
 		public synchronized UsbInterface getInterface(final int interface_id) throws IllegalStateException {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				return getInterface(interface_id, 0);
+				return getInterface(interface_id,0);
+			}else {
+				return getInterface(interface_id);
 			}
-			return getInterface(interface_id );
 		}
 
 		/**
