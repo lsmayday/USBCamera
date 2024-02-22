@@ -2,9 +2,21 @@ plugins {
 	id 'com.android.library'
 	id 'maven-publish'
 }
-group = 'com.github.chenyeju295'
 
 import org.apache.tools.ant.taskdefs.condition.Os
+
+afterEvaluate {
+	publishing {
+		publications {
+			release(MavenPublication) {
+				from components.release
+				groupId = 'com.github.chenyeju295'
+				artifactId = 'libuvc'
+				version = rootProject.ext.versionNameString
+			}
+		}
+	}
+}
 
 android {
 	compileSdkVersion rootProject.ext.versionCompiler
