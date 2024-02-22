@@ -4,19 +4,6 @@ plugins {
     id 'maven-publish'
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.chenyeju295'
-                artifactId = 'libausbc'
-                version = rootProject.ext.versionNameString
-            }
-        }
-    }
-}
-
 android {
     compileSdkVersion rootProject.ext.versionCompiler
 
@@ -37,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget =  JavaVersion.VERSION_11.toString()
+        jvmTarget =  '1.8'
     }
 }
 
@@ -54,4 +41,17 @@ dependencies {
 
     implementation project(path: ':libuvc')
     api project(path: ':libnative')
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.chenyeju295'
+                artifactId = 'libausbc'
+                version = rootProject.ext.versionNameString
+            }
+        }
+    }
 }
